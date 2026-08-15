@@ -55,11 +55,9 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
 
-  // URL se id nikal kar product find karna
   const productId = Number(params.id);
   const product = allProducts.find((p) => p.id === productId);
 
-  // Agar product na mile toh error/not found message
   if (!product) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
@@ -75,6 +73,7 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     addToCart({ 
       ...product, 
+      id: String(product.id), // <-- ID ko string mein convert kiya taake type match ho
       quantity, 
       selectedSize 
     });
@@ -84,8 +83,6 @@ export default function ProductDetail() {
   return (
     <div className="bg-white min-h-screen text-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        
-        {/* Breadcrumb / Back link */}
         <div className="mb-8">
           <Link href="/shop" className="text-sm font-medium text-gray-500 hover:text-black transition">
             &larr; Back to All Products
@@ -93,8 +90,6 @@ export default function ProductDetail() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          
-          {/* Left: Product Image */}
           <div className="bg-gray-100 h-[450px] sm:h-[550px] w-full relative rounded-2xl overflow-hidden shadow-sm border border-gray-100">
             <img 
               src={product.image} 
@@ -106,7 +101,6 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          {/* Right: Product Details & Actions */}
           <div className="flex flex-col justify-center space-y-6">
             <div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900">{product.title}</h1>
@@ -115,7 +109,6 @@ export default function ProductDetail() {
 
             <p className="text-gray-600 leading-relaxed text-base">{product.description}</p>
 
-            {/* Size Selector */}
             <div>
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Select Size</h3>
               <div className="flex gap-3 mt-2">
@@ -135,7 +128,6 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Quantity & Add to Cart */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
               <div className="flex items-center justify-center border border-gray-300 rounded-xl overflow-hidden bg-white">
                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="px-5 py-3.5 bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold transition">-</button>
@@ -150,7 +142,6 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            {/* WhatsApp Direct Order Button */}
             <div>
               <a 
                 href={`https://wa.me/923001234567?text=Hi, I want to order ${product.title} (${product.price}) - Size: ${selectedSize} - Qty: ${quantity}`}
@@ -161,7 +152,6 @@ export default function ProductDetail() {
                 <span>💬</span> Order via WhatsApp
               </a>
             </div>
-
           </div>
         </div>
       </div>

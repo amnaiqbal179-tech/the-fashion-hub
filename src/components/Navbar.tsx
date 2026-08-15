@@ -8,15 +8,17 @@ import { UserButton, useUser, SignInButton } from '@clerk/nextjs';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { totalItems } = useCart();
+  const { cartItems } = useCart();
   const { isSignedIn } = useUser();
+
+  // Total items calculate kar rahe hain dynamically
+  const totalItems = (cartItems || []).reduce((acc, item) => acc + (item.quantity || 1), 0);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           
-          {/* Logo Image */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center">
               <Image 
@@ -30,7 +32,6 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 text-sm font-medium text-gray-700">
             <Link href="/" className="hover:text-black transition">Home</Link>
             <Link href="/shop" className="hover:text-black transition">All Products</Link>
@@ -41,10 +42,7 @@ export default function Navbar() {
             <Link href="/contact" className="hover:text-black transition">Contact</Link>
           </nav>
 
-          {/* Right Icons (Auth, Cart & Mobile Menu Button) */}
           <div className="flex items-center space-x-4">
-            
-            {/* Desktop Auth Buttons */}
             <div className="hidden sm:flex items-center">
               {!isSignedIn ? (
                 <SignInButton mode="modal">
@@ -57,7 +55,6 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Cart Icon */}
             <Link href="/cart" className="relative p-2 text-gray-700 hover:text-black transition">
               <span className="sr-only">Cart</span>
               🛒
@@ -68,7 +65,6 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden p-2 text-gray-700 hover:text-black focus:outline-none"
@@ -85,7 +81,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-4 space-y-2">
           <Link href="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">
@@ -110,7 +105,6 @@ export default function Navbar() {
             Contact
           </Link>
 
-          {/* Mobile Auth View */}
           <div className="pt-3 border-t border-gray-100 flex items-center justify-between px-3">
             <span className="text-sm font-medium text-gray-600">Account:</span>
             <div>
