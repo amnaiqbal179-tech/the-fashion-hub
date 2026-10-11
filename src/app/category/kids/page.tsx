@@ -1,18 +1,27 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
+// Ensures page is dynamically rendered at runtime (Fixes Vercel prerender DB connection errors)
+export const dynamic = 'force-dynamic';
+
 export default async function KidsCategoryPage() {
-  // Database se Kids category ke products fetch karna
-  const kidsProducts = await prisma.product.findMany({
-    where: {
-      OR: [
-        { categoryName: { equals: 'Kids', mode: 'insensitive' } },
-        { category: { is: { name: { equals: 'Kids', mode: 'insensitive' } } } },
-        { category: { is: { slug: { equals: 'kids', mode: 'insensitive' } } } }
-      ]
-    },
-    orderBy: { createdAt: 'desc' }
-  });
+  let kidsProducts: any[] = [];
+
+  try {
+    // Database se Kids category ke products fetch karna
+    kidsProducts = await prisma.product.findMany({
+      where: {
+        OR: [
+          { categoryName: { equals: 'Kids', mode: 'insensitive' } },
+          { category: { is: { name: { equals: 'Kids', mode: 'insensitive' } } } },
+          { category: { is: { slug: { equals: 'kids', mode: 'insensitive' } } } }
+        ]
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (error) {
+    console.error('Error fetching Kids products from database:', error);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 py-10 px-4 sm:px-6 lg:px-8">
