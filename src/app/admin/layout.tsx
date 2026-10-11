@@ -156,7 +156,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             <div className="flex items-center gap-3">
               {isLoaded && user ? (
-                <UserButton afterSignOutUrl="/" />
+                <UserButton />
               ) : (
                 <div className="w-9 h-9 rounded-full bg-slate-900 text-amber-400 font-bold flex items-center justify-center border border-slate-700 text-sm shadow-sm">
                   <User className="w-4 h-4" />
