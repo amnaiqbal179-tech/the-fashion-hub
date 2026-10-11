@@ -1,15 +1,26 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Geist } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { CartProvider } from "@/context/CartContext";
-import { ClerkProvider } from "@clerk/nextjs"; // 1. Clerk import kiya
+import { cn } from "@/lib/utils";
 
-const inter = Inter({ subsets: ["latin"] });
+const geist = Geist({ 
+  subsets: ["latin"], 
+  variable: "--font-sans" 
+});
+
+const inter = Inter({ 
+  subsets: ["latin"], 
+  variable: "--font-inter" 
+});
 
 export const metadata: Metadata = {
-  title: "The Fashion Hub | Premium Clothing",
-  description: "Your ultimate fashion destination",
+  title: "The Fashion Hub | Luxury & Premium Apparel",
+  description: "Exclusive Men, Women, and Kids collections at The Fashion Hub.",
+  keywords: ["fashion", "clothing", "unstitched", "ready to wear", "luxury lawn", "festive"],
 };
 
 export default function RootLayout({
@@ -18,15 +29,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider> {/* 2. Root layout ko wrap kiya */}
-      <html lang="en">
-        <body className={inter.className}>
+    <ClerkProvider>
+      <html 
+        lang="en" 
+        className={cn("h-full scroll-smooth", geist.variable, inter.variable)}
+      >
+        <body 
+          className="min-h-screen bg-[#f1f5f9] text-slate-900 antialiased selection:bg-amber-500 selection:text-white flex flex-col justify-between"
+        >
           <CartProvider>
+            {/* Top Navigation */}
             <Navbar />
-            {/* Navbar ki height (h-20) ke hisaab se margin top diya hai */}
-            <main className="pt-20"> 
+            
+            {/* Main Page Content */}
+            <main className="flex-1 min-h-[calc(100vh-80px)]">
               {children}
             </main>
+
+            {/* Global Storefront Footer */}
+            <Footer />
           </CartProvider>
         </body>
       </html>

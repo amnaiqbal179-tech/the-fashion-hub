@@ -1,82 +1,92 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
 export interface Product {
   id: string;
-  title: string;
-  category: string;
-  price: string;
-  image: string;
+  name?: string;
+  title?: string;
+  category?: any;
+  categoryName?: string;
+  price: number | string;
+  salePrice?: number | string | null;
+  images?: string[];
+  coverImage?: string;
+  image?: string;
   quantity?: number;
 }
 
 export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
   const { addToCart } = useCart();
 
-  // Complete products array with explicit Product[] typing and string IDs
-  const allProducts: Product[] = [
-    // --- Women Products (20) ---
-    { id: '1', title: 'Embroidered Lawn Suit', category: 'Women', price: 'Rs. 4,500', image: '/images/shop/women/women1.jpg' },
-    { id: '2', title: 'Summer Casual Kurti', category: 'Women', price: 'Rs. 3,200', image: '/images/shop/women/women2.jpg' },
-    { id: '3', title: 'Formal Party Wear Dress', category: 'Women', price: 'Rs. 6,500', image: '/images/shop/women/women3.jpg' },
-    { id: '4', title: 'Chiffon Embroidered Maxi', category: 'Women', price: 'Rs. 7,200', image: '/images/shop/women/women4.jpg' },
-    { id: '5', title: 'Printed Cotton Tunics', category: 'Women', price: 'Rs. 2,800', image: '/images/shop/women/women5.jpg' },
-    { id: '6', title: 'Luxury Velvet Ensemble', category: 'Women', price: 'Rs. 9,500', image: '/images/shop/women/women6.jpg' },
-    { id: '7', title: 'Daily Wear Cotton Suit', category: 'Women', price: 'Rs. 3,500', image: '/images/shop/women/women7.jpg' },
-    { id: '8', title: 'Designer Organza Outfit', category: 'Women', price: 'Rs. 8,000', image: '/images/shop/women/women8.jpg' },
-    { id: '9', title: 'Traditional Gharara Set', category: 'Women', price: 'Rs. 10,200', image: '/images/shop/women/women9.jpg' },
-    { id: '10', title: 'Contemporary Pret Kurti', category: 'Women', price: 'Rs. 3,900', image: '/images/shop/women/women10.jpg' },
-    { id: '11', title: 'Block Printed Slub Suit', category: 'Women', price: 'Rs. 4,100', image: '/images/shop/women/women11.jpg' },
-    { id: '12', title: 'Jacquard Festive Wear', category: 'Women', price: 'Rs. 6,800', image: '/images/shop/women/women12.jpg' },
-    { id: '13', title: 'Casual Linen Kurti', category: 'Women', price: 'Rs. 3,100', image: '/images/shop/women/women13.jpg' },
-    { id: '14', title: 'Bridal Heavy Lehenga', category: 'Women', price: 'Rs. 18,500', image: '/images/shop/women/women14.jpg' },
-    { id: '15', title: 'Net Embroidered Frock', category: 'Women', price: 'Rs. 7,500', image: '/images/shop/women/women15.jpg' },
-    { id: '16', title: 'Digital Print Cambric Suit', category: 'Women', price: 'Rs. 4,300', image: '/images/shop/women/women16.jpg' },
-    { id: '17', title: 'Embroided Organza Dupatta Suit', category: 'Women', price: 'Rs. 6,200', image: '/images/shop/women/women17.jpg' },
-    { id: '18', title: 'Minimalist Daily Kurti', category: 'Women', price: 'Rs. 2,500', image: '/images/shop/women/women18.jpg' },
-    { id: '19', title: 'Royal Silk Suit', category: 'Women', price: 'Rs. 8,900', image: '/images/shop/women/women19.jpg' },
-    { id: '20', title: 'Classic White Chikankari Suit', category: 'Women', price: 'Rs. 5,500', image: '/images/shop/women/women20.jpg' },
+  // Database se dynamic products fetch karna
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/products');
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data);
+      }
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // --- Men Products (8) ---
-    { id: '21', title: 'Designer Men Kurta Shalwar', category: 'Men', price: 'Rs. 3,800', image: '/images/shop/men/men1.jpg' },
-    { id: '22', title: 'Classic Formal Gents Suit', category: 'Men', price: 'Rs. 5,200', image: '/images/shop/men/men2.jpg' },
-    { id: '23', title: 'Casual Cotton Shirt', category: 'Men', price: 'Rs. 2,500', image: '/images/shop/men/men3.jpg' },
-    { id: '24', title: 'Embroidered Waistcoat Set', category: 'Men', price: 'Rs. 6,000', image: '/images/shop/men/men4.jpg' },
-    { id: '25', title: 'Linen Kurta for Men', category: 'Men', price: 'Rs. 3,400', image: '/images/shop/men/men5.jpg' },
-    { id: '26', title: 'Formal Business Suit', category: 'Men', price: 'Rs. 12,500', image: '/images/shop/men/men6.jpg' },
-    { id: '27', title: 'Casual Denim Shirt', category: 'Men', price: 'Rs. 2,900', image: '/images/shop/men/men7.jpg' },
-    { id: '28', title: 'Festive Sherwani Collection', category: 'Men', price: 'Rs. 14,000', image: '/images/shop/men/men8.jpg' },
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-    // --- Kids Products (6) ---
-    { id: '29', title: 'Kids Festive Party Wear', category: 'Kids', price: 'Rs. 2,900', image: '/images/shop/kids/kids1.jpg' },
-    { id: '30', title: 'Kids Everyday Casual Outfit', category: 'Kids', price: 'Rs. 2,400', image: '/images/shop/kids/kids2.jpg' },
-    { id: '31', title: 'Boys Traditional Kurta Shalwar', category: 'Kids', price: 'Rs. 2,200', image: '/images/shop/kids/kids3.jpg' },
-    { id: '32', title: 'Girls Cute Party Frock', category: 'Kids', price: 'Rs. 3,100', image: '/images/shop/kids/kids4.jpg' },
-    { id: '33', title: 'Kids Summer Cotton Set', category: 'Kids', price: 'Rs. 1,900', image: '/images/shop/kids/kids5.jpg' },
-    { id: '34', title: 'Boys Formal Waistcoat Suit', category: 'Kids', price: 'Rs. 4,500', image: '/images/shop/kids/kids6.jpg' },
-  ];
+  // Category Name Safe Extraction (Fixes null object bug)
+  const extractCategoryName = (product: Product): string => {
+    if (product.category && typeof product.category === 'object' && product.category.name) {
+      return product.category.name;
+    }
+    if (typeof product.category === 'string' && product.category) {
+      return product.category;
+    }
+    if (product.categoryName) {
+      return product.categoryName;
+    }
+    return '';
+  };
 
-  // Filter products based on selected category
-  const filteredProducts = selectedCategory === 'All' 
-    ? allProducts 
-    : allProducts.filter(product => product.category === selectedCategory);
+  // Filter products based on selected category (Women, Men, Kids)
+  const filteredProducts = products.filter((product) => {
+    if (selectedCategory === 'All') return true;
+    const catName = extractCategoryName(product);
+    return catName.trim().toLowerCase() === selectedCategory.toLowerCase();
+  });
 
   const handleAddToCart = (product: Product) => {
+    const productTitle = product.name || product.title || 'Outfit';
+    const displayPrice = product.salePrice 
+      ? `Rs. ${Number(product.salePrice).toLocaleString()}` 
+      : typeof product.price === 'number' 
+        ? `Rs. ${product.price.toLocaleString()}` 
+        : product.price;
+
+    const coverImg = product.coverImage || product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80';
+    const catName = extractCategoryName(product) || 'Fashion';
+
     addToCart({
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      image: product.image,
-      category: product.category,
+      id: String(product.id),
+      title: productTitle,
+      price: displayPrice,
+      image: coverImg,
+      category: catName,
       quantity: 1,
     });
 
-    setAddedProductId(product.id);
+    setAddedProductId(String(product.id));
     setTimeout(() => {
       setAddedProductId(null);
     }, 2000);
@@ -108,73 +118,96 @@ export default function ShopPage() {
         ))}
       </div>
 
-      {/* Products Grid */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-        {filteredProducts.map((product) => {
-          const isAdded = addedProductId === product.id;
+      {/* Loading State */}
+      {loading ? (
+        <div className="text-center py-20">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-900 border-t-transparent"></div>
+          <p className="text-gray-500 text-sm mt-3 font-semibold">Loading real products...</p>
+        </div>
+      ) : (
+        /* Products Grid */
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {filteredProducts.map((product) => {
+            const isAdded = addedProductId === String(product.id);
+            const productTitle = product.name || product.title || 'Untitled Outfit';
+            const coverImg = product.coverImage || product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80';
+            const catName = extractCategoryName(product) || 'Fashion';
+            
+            const rawPrice = product.salePrice || product.price;
+            const formattedPrice = typeof rawPrice === 'number' 
+              ? `Rs. ${rawPrice.toLocaleString()}` 
+              : rawPrice;
 
-          return (
-            <div 
-              key={product.id} 
-              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition border border-gray-100 flex flex-col group"
-            >
-              {/* Clickable Image & Category Badge */}
-              <Link href={`/product/${product.id}`} className="block">
-                <div className="relative h-72 sm:h-80 bg-gray-200 overflow-hidden">
-                  <img 
-                    src={product.image} 
-                    alt={product.title} 
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500"
-                  />
-                  <span className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider font-medium">
-                    {product.category}
-                  </span>
-                </div>
-              </Link>
+            return (
+              <div 
+                key={product.id} 
+                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition border border-gray-100 flex flex-col group"
+              >
+                {/* Image Click -> Open Product Details */}
+                <Link href={`/shop/${product.id}`} className="block">
+                  <div className="relative h-72 sm:h-80 bg-gray-200 overflow-hidden cursor-pointer">
+                    <img 
+                      src={coverImg} 
+                      alt={productTitle} 
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500"
+                    />
+                    <span className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider font-medium">
+                      {catName}
+                    </span>
+                  </div>
+                </Link>
 
-              {/* Product Info */}
-              <div className="p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <Link href={`/product/${product.id}`}>
-                    <h3 className="font-bold text-gray-900 text-base sm:text-lg hover:underline cursor-pointer">{product.title}</h3>
-                  </Link>
-                  <p className="text-gray-600 font-semibold mt-1 text-sm sm:text-base">{product.price}</p>
-                </div>
+                {/* Product Info */}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <Link href={`/shop/${product.id}`}>
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg hover:underline cursor-pointer line-clamp-1">{productTitle}</h3>
+                    </Link>
+                    
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <p className="text-gray-900 font-bold text-sm sm:text-base">{formattedPrice}</p>
+                      {product.salePrice && product.price && (
+                        <p className="text-gray-400 line-through text-xs">
+                          Rs. {Number(product.price).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-                {/* Action Buttons */}
-                <div className="mt-5 space-y-2">
-                  {/* Add to Cart Button */}
-                  <button 
-                    onClick={() => handleAddToCart(product)}
-                    className={`w-full py-2.5 rounded-xl text-sm font-medium transition shadow-sm cursor-pointer ${
-                      isAdded 
-                        ? 'bg-green-600 text-white' 
-                        : 'bg-gray-900 text-white hover:bg-black'
-                    }`}
-                  >
-                    {isAdded ? '✓ Added to Cart' : '🛒 Add to Cart'}
-                  </button>
+                  {/* Action Buttons */}
+                  <div className="mt-5 space-y-2">
+                    <button 
+                      onClick={() => handleAddToCart(product)}
+                      className={`w-full py-2.5 rounded-xl text-sm font-medium transition shadow-sm cursor-pointer ${
+                        isAdded 
+                          ? 'bg-green-600 text-white' 
+                          : 'bg-gray-900 text-white hover:bg-black'
+                      }`}
+                    >
+                      {isAdded ? '✓ Added to Cart' : '🛒 Add to Cart'}
+                    </button>
 
-                  {/* WhatsApp Order Button */}
-                  <a 
-                    href={`https://wa.me/923364202400?text=${encodeURIComponent(`Hi, I want to order ${product.title} (${product.price})`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full bg-green-600 text-white text-center py-2.5 rounded-xl text-sm font-medium hover:bg-green-700 transition flex items-center justify-center gap-2 shadow-sm"
-                  >
-                    <span>💬</span> WhatsApp Order
-                  </a>
+                    <a 
+                      href={`https://wa.me/923364202400?text=${encodeURIComponent(`Hi, I want to order ${productTitle} (${formattedPrice})`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-green-600 text-white text-center py-2.5 rounded-xl text-sm font-medium hover:bg-green-700 transition flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <span>💬</span> WhatsApp Order
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
-      {/* Empty State Check */}
-      {filteredProducts.length === 0 && (
-        <div className="text-center py-20">
-          <p className="text-gray-500 text-lg">No products found in this category.</p>
+      {/* Empty State */}
+      {!loading && filteredProducts.length === 0 && (
+        <div className="text-center py-20 bg-white rounded-2xl border border-gray-200 max-w-md mx-auto my-10 p-8 shadow-sm">
+          <p className="text-gray-800 font-bold text-lg">No products found</p>
+          <p className="text-gray-500 text-sm mt-1">Is category mein abhi koi product add nahi hua hai. Admin Dashboard se add karein.</p>
         </div>
       )}
 

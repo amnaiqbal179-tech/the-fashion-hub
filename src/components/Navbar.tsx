@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { UserButton, useUser, SignInButton } from '@clerk/nextjs';
 
@@ -10,6 +11,12 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { cartItems } = useCart();
   const { isSignedIn } = useUser();
+  const pathname = usePathname();
+
+  // Agar route /admin se start hota hai, toh public Navbar hide kar do
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   // Total items calculate kar rahe hain dynamically
   const totalItems = (cartItems || []).reduce((acc, item) => acc + (item.quantity || 1), 0);

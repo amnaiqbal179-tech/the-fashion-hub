@@ -2,7 +2,6 @@ import HeroSection from '@/components/HeroSection';
 import CategoriesSection from '@/components/CategoriesSection';
 import NewArrivalsSection from '@/components/NewArrivalsSection';
 import BrandHighlights from '@/components/BrandHighlights';
-import Footer from '@/components/Footer';
 
 export default function HomePage() {
   return (
@@ -11,7 +10,6 @@ export default function HomePage() {
       <CategoriesSection />
       <NewArrivalsSection />
       <BrandHighlights />
-      <Footer />
     </div>
   );
 }

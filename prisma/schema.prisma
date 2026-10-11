@@ -16,22 +16,35 @@ model Category {
 }
 
 model Product {
-  id          String    @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  images      String[]  // Multiple images ka array
-  sizes       String[]  // e.g., ["S", "M", "L", "XL"]
-  stock       Int       @default(0)
-  isFeatured  Boolean   @default(false)
-  categoryId  String
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  reviews     Review[]  // Har product ke multi reviews honge
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id               String    @id @default(uuid())
+  name             String
+  slug             String?   @unique
+  sku              String?
+  description      String?
+  price            Float
+  salePrice        Float?
+  fabric           String?
+  stitchStatus     String?
+  subCategory      String?
+  careInstructions String?
+  coverImage       String?
+  categoryName     String?
+  colors           String[]  @default([])
+  images           String[]  // Multiple images ka array
+  sizes            String[]  // e.g., ["S", "M", "L", "XL"]
+  stock            Int       @default(0)
+  isFeatured       Boolean   @default(false)
+  isNewArrival     Boolean   @default(false)
+  metaTitle        String?
+  metaDescription  String?
+  categoryId       String?
+  category         Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  reviews          Review[]  // Har product ke multi reviews honge
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
-// Naya Review Model
+// Review Model
 model Review {
   id        String   @id @default(uuid())
   name      String   // Customer ka naam
